@@ -1,22 +1,34 @@
 const { test, expect } = require("@playwright/test");
 
-test("test", async ({ page }) => {
-  // Go to https://netology.ru/free/management#/
-  await page.goto("https://netology.ru/free/management#/");
+const {email} = require('./user.js');
+const {password} = require('./user.js');
 
-  // Click a
-  await page.click("a");
-  await expect(page).toHaveURL("https://netology.ru/");
+test('successfulAuthorization', async ({ page }) => {
 
-  // Click text=Учиться бесплатно
-  await page.click("text=Учиться бесплатно");
-  await expect(page).toHaveURL("https://netology.ru/free");
+  await page.goto('https://netology.ru/');
+  await page.getByRole('link', { name: 'Войти' }).click();
+  await page.getByPlaceholder('Email').click();
+  await page.getByPlaceholder('Email').fill(email);
+  await page.getByPlaceholder('Email').press('Enter');
+  await page.getByPlaceholder('Пароль').click();
+  await page.getByPlaceholder('Пароль').fill(password);
+  await page.getByTestId('login-submit-btn').click();
 
-  page.click("text=Бизнес и управление");
+  await expect(page).toHaveURL('https://netology.ru/profile');
+  await expect(page).toHaveTitle('Мои программы обучения');
 
-  // Click text=Как перенести своё дело в онлайн
-  await page.click("text=Как перенести своё дело в онлайн");
-  await expect(page).toHaveURL(
-    "https://netology.ru/programs/kak-perenesti-svoyo-delo-v-onlajn-bp"
-  );
+});
+
+test('unsuccessfulAuthorization', async ({ page }) => {
+
+  await page.goto('https://netology.ru/');
+  await page.getByRole('link', { name: 'Войти' }).click();
+  await page.getByPlaceholder('Email').click();
+  await page.getByPlaceholder('Email').fill('kate@mail.ru');
+  await page.getByPlaceholder('Пароль').click();
+  await page.getByPlaceholder('Пароль').fill('123');
+  await page.getByTestId('login-submit-btn').click();
+
+  await expect(page.getByTestId('login-error-hint')).toHaveText('Вы ввели неправильно логин или пароль');
+
 });
