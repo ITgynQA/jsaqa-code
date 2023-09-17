@@ -1,0 +1,20 @@
+const config = {
+    coverageThreshold: {
+        global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: -10,
+        },
+    },
+    collectCoverageFrom: [
+        '**/*.{js,jsx}',
+        '!**/node_modules/**',
+        '!**/coverage/**',
+    ],
+    coverageReporters: ['clover', 'json', 'lcov', ['text', {
+        skipFull: true
+    }]],
+};
+
+module.exports = config;
